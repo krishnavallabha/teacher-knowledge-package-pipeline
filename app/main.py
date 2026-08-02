@@ -90,7 +90,7 @@ async def generate(
                 yield f"data: {json.dumps(payload)}\n\n"
         except Exception as e:  # noqa: BLE001 -- surface any pipeline failure to the client
             traceback.print_exc()
-            print("PIPELINE FAILED:", repr(e)
+            print("PIPELINE FAILED:", repr(e))
             yield f"data: {json.dumps({
         'stage': 'failed',
         'progress': 0,
