@@ -191,7 +191,10 @@
   </div>
 
   <script>
-    const BACKEND_URL = "";
+    const BACKEND_URL =
+    window.location.hostname === "localhost"
+        ? "http://localhost:8000"
+        : "";
     const fileInput = document.getElementById("file-input");
     const fileChip = document.getElementById("file-chip");
     const uploadZone = document.getElementById("upload-zone");
