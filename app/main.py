@@ -40,6 +40,11 @@ app.add_middleware(
 )
 
 _FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
+app.mount(
+    "/",
+    StaticFiles(directory=_FRONTEND_DIR, html=True),
+    name="frontend",
+)
 _JOB_OUTPUTS_DIR = Path(__file__).resolve().parent.parent / "job_outputs"
 _ARTIFACT_FILENAMES = {
     "json": "TeacherKnowledgePackage.json",
@@ -49,10 +54,7 @@ _ARTIFACT_FILENAMES = {
 }
 
 
-@app.get("/")
-def serve_frontend():
 
-    return FileResponse(_FRONTEND_DIR / "index.html")
 
 
 @app.get("/api/health")
