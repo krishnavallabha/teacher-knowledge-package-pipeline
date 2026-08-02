@@ -1,0 +1,206 @@
+{
+  "job_id": "e00fbf11",
+  "source_filename": "sample.txt",
+  "metadata": {
+    "subject": "Physics",
+    "grade": "9",
+    "difficulty": "Intermediate",
+    "topic": "Newton's Laws",
+    "chapter": "Motion",
+    "category": "STEM",
+    "language": "English"
+  },
+  "knowledge": {
+    "learning_objectives": [
+      "Understand Newton's three laws",
+      "Apply F=ma to solve problems"
+    ],
+    "prerequisites": [
+      "Basic algebra",
+      "Concept of force"
+    ],
+    "concepts": [
+      {
+        "name": "First Law",
+        "definition": "Law of inertia",
+        "related_formulae": []
+      },
+      {
+        "name": "Second Law",
+        "definition": "F=ma",
+        "related_formulae": [
+          "F = ma"
+        ]
+      },
+      {
+        "name": "Third Law",
+        "definition": "Action-reaction",
+        "related_formulae": []
+      }
+    ],
+    "keywords": [
+      "inertia",
+      "force",
+      "acceleration"
+    ],
+    "examples": [
+      "A ball rolling on a frictionless surface"
+    ],
+    "applications": [
+      "Seatbelt design"
+    ],
+    "common_misconceptions": [
+      "Constant force produces constant velocity, not acceleration"
+    ]
+  },
+  "teaching_plan": {
+    "total_periods": 2,
+    "periods": [
+      {
+        "period_number": 1,
+        "duration_minutes": 40,
+        "title": "Newton's First and Second Laws",
+        "learning_objectives": [
+          "Understand Newton's three laws"
+        ],
+        "concepts_covered": [
+          "First Law",
+          "Second Law"
+        ]
+      },
+      {
+        "period_number": 2,
+        "duration_minutes": 40,
+        "title": "Newton's Third Law and Applications",
+        "learning_objectives": [
+          "Apply F=ma to solve problems"
+        ],
+        "concepts_covered": [
+          "Third Law"
+        ]
+      }
+    ]
+  },
+  "period_contents": [
+    {
+      "period_number": 1,
+      "entry_ticket": "Quick warmup question",
+      "teacher_script": "Today we will learn about...",
+      "blackboard_notes": "F = ma",
+      "classroom_activities": [
+        "Demo with a cart"
+      ],
+      "checkpoint_questions": [
+        "What is inertia?"
+      ],
+      "exit_ticket": "Exit question",
+      "homework": "Solve 3 problems",
+      "mentor_moment": "Newton discovered this while..."
+    },
+    {
+      "period_number": 2,
+      "entry_ticket": "Quick warmup question",
+      "teacher_script": "Today we will learn about...",
+      "blackboard_notes": "F = ma",
+      "classroom_activities": [
+        "Demo with a cart"
+      ],
+      "checkpoint_questions": [
+        "What is inertia?"
+      ],
+      "exit_ticket": "Exit question",
+      "homework": "Solve 3 problems",
+      "mentor_moment": "Newton discovered this while..."
+    }
+  ],
+  "activities": [
+    {
+      "period_number": 1,
+      "activity_type": "demonstration",
+      "title": "Cart demo",
+      "duration_minutes": 15,
+      "materials_needed": [
+        "cart",
+        "track"
+      ],
+      "teacher_instructions": "Push the cart and observe",
+      "success_criteria": "Students explain the result"
+    },
+    {
+      "period_number": 2,
+      "activity_type": "demonstration",
+      "title": "Cart demo",
+      "duration_minutes": 15,
+      "materials_needed": [
+        "cart",
+        "track"
+      ],
+      "teacher_instructions": "Push the cart and observe",
+      "success_criteria": "Students explain the result"
+    }
+  ],
+  "assessments": [
+    {
+      "period_number": 1,
+      "questions": [
+        {
+          "question_type": "mcq",
+          "question_text": "What is Newton's first law?",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "correct_answer": "A",
+          "rubric": null
+        },
+        {
+          "question_type": "short_answer",
+          "question_text": "Explain F=ma",
+          "options": null,
+          "correct_answer": "Force equals mass times acceleration",
+          "rubric": "Must mention all 3 terms"
+        }
+      ]
+    },
+    {
+      "period_number": 2,
+      "questions": [
+        {
+          "question_type": "mcq",
+          "question_text": "What is Newton's first law?",
+          "options": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ],
+          "correct_answer": "A",
+          "rubric": null
+        },
+        {
+          "question_type": "short_answer",
+          "question_text": "Explain F=ma",
+          "options": null,
+          "correct_answer": "Force equals mass times acceleration",
+          "rubric": "Must mention all 3 terms"
+        }
+      ]
+    }
+  ],
+  "learning_gaps": [
+    {
+      "misconception": "Constant force -> constant velocity",
+      "diagnostic_question": "If I push a box with steady force, does it move at constant speed?",
+      "severity": "high",
+      "remedial_action": "Do a live cart demo showing acceleration"
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "issues": []
+  },
+  "stage": "publishing",
+  "progress": 97
+}

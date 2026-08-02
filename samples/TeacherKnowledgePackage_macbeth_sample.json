@@ -1,0 +1,203 @@
+{
+  "job_id": "3e4303cb",
+  "source_filename": "macbeth_ambition.txt",
+  "metadata": {
+    "subject": "English Literature",
+    "grade": "10",
+    "difficulty": "Intermediate",
+    "topic": "Ambition in Macbeth",
+    "chapter": "Macbeth",
+    "category": "Humanities",
+    "language": "English"
+  },
+  "knowledge": {
+    "learning_objectives": [
+      "Analyze how ambition drives Macbeth's moral decline",
+      "Evaluate Lady Macbeth's role as a catalyst"
+    ],
+    "prerequisites": [
+      "Basic plot familiarity with Macbeth Acts 1-2"
+    ],
+    "concepts": [
+      {
+        "name": "Ambition as corruption",
+        "definition": "Unchecked ambition overriding conscience",
+        "related_formulae": []
+      },
+      {
+        "name": "Lady Macbeth as catalyst",
+        "definition": "Provokes Macbeth toward action via manipulation",
+        "related_formulae": []
+      },
+      {
+        "name": "Guilt and psychological collapse",
+        "definition": "Guilt manifesting as hallucination and sleepwalking",
+        "related_formulae": []
+      }
+    ],
+    "keywords": [
+      "ambition",
+      "guilt",
+      "corruption",
+      "tragedy"
+    ],
+    "examples": [
+      "Macbeth's dagger hallucination",
+      "Lady Macbeth's sleepwalking scene"
+    ],
+    "applications": [
+      "Comparing ambition themes across other tragedies"
+    ],
+    "common_misconceptions": [
+      "Macbeth is purely villainous from the start rather than morally declining gradually"
+    ]
+  },
+  "teaching_plan": {
+    "total_periods": 2,
+    "periods": [
+      {
+        "period_number": 1,
+        "duration_minutes": 40,
+        "title": "Ambition Awakens",
+        "learning_objectives": [
+          "Analyze how ambition drives Macbeth's moral decline"
+        ],
+        "concepts_covered": [
+          "Ambition as corruption",
+          "Lady Macbeth as catalyst"
+        ]
+      },
+      {
+        "period_number": 2,
+        "duration_minutes": 40,
+        "title": "Guilt and Collapse",
+        "learning_objectives": [
+          "Evaluate Lady Macbeth's role as a catalyst"
+        ],
+        "concepts_covered": [
+          "Guilt and psychological collapse"
+        ]
+      }
+    ]
+  },
+  "period_contents": [
+    {
+      "period_number": 1,
+      "entry_ticket": "What would you do with unchecked power?",
+      "teacher_script": "Today we examine how ambition transforms Macbeth...",
+      "blackboard_notes": "Ambition -> Action -> Guilt -> Collapse",
+      "classroom_activities": [
+        "Close reading of Act 1 Scene 7"
+      ],
+      "checkpoint_questions": [
+        "What pushes Macbeth to act?"
+      ],
+      "exit_ticket": "Exit reflection",
+      "homework": "Read Act 2, annotate imagery of blood",
+      "mentor_moment": "Shakespeare wrote this during a time of real political paranoia in England..."
+    },
+    {
+      "period_number": 2,
+      "entry_ticket": "What would you do with unchecked power?",
+      "teacher_script": "Today we examine how ambition transforms Macbeth...",
+      "blackboard_notes": "Ambition -> Action -> Guilt -> Collapse",
+      "classroom_activities": [
+        "Close reading of Act 1 Scene 7"
+      ],
+      "checkpoint_questions": [
+        "What pushes Macbeth to act?"
+      ],
+      "exit_ticket": "Exit reflection",
+      "homework": "Read Act 2, annotate imagery of blood",
+      "mentor_moment": "Shakespeare wrote this during a time of real political paranoia in England..."
+    }
+  ],
+  "activities": [
+    {
+      "period_number": 1,
+      "activity_type": "role_play",
+      "title": "Dagger soliloquy performance",
+      "duration_minutes": 15,
+      "materials_needed": [
+        "script excerpts"
+      ],
+      "teacher_instructions": "Students perform the dagger soliloquy in pairs",
+      "success_criteria": "Students identify Macbeth's internal conflict in performance"
+    },
+    {
+      "period_number": 2,
+      "activity_type": "role_play",
+      "title": "Dagger soliloquy performance",
+      "duration_minutes": 15,
+      "materials_needed": [
+        "script excerpts"
+      ],
+      "teacher_instructions": "Students perform the dagger soliloquy in pairs",
+      "success_criteria": "Students identify Macbeth's internal conflict in performance"
+    }
+  ],
+  "assessments": [
+    {
+      "period_number": 1,
+      "questions": [
+        {
+          "question_type": "mcq",
+          "question_text": "Who first plants the idea of murder in Macbeth's mind?",
+          "options": [
+            "The witches",
+            "Banquo",
+            "Duncan",
+            "Macduff"
+          ],
+          "correct_answer": "The witches",
+          "rubric": null
+        },
+        {
+          "question_type": "long_answer",
+          "question_text": "Discuss how ambition corrupts Macbeth over the course of the play",
+          "options": null,
+          "correct_answer": "Should trace the arc from loyal soldier to guilt-ridden tyrant",
+          "rubric": "Must reference at least two textual moments and the psychological shift"
+        }
+      ]
+    },
+    {
+      "period_number": 2,
+      "questions": [
+        {
+          "question_type": "mcq",
+          "question_text": "Who first plants the idea of murder in Macbeth's mind?",
+          "options": [
+            "The witches",
+            "Banquo",
+            "Duncan",
+            "Macduff"
+          ],
+          "correct_answer": "The witches",
+          "rubric": null
+        },
+        {
+          "question_type": "long_answer",
+          "question_text": "Discuss how ambition corrupts Macbeth over the course of the play",
+          "options": null,
+          "correct_answer": "Should trace the arc from loyal soldier to guilt-ridden tyrant",
+          "rubric": "Must reference at least two textual moments and the psychological shift"
+        }
+      ]
+    }
+  ],
+  "learning_gaps": [
+    {
+      "misconception": "Macbeth is purely villainous from the start",
+      "diagnostic_question": "Was Macbeth a good man before the witches' prophecy? Why or why not?",
+      "severity": "medium",
+      "remedial_action": "Reread Act 1 Scene 2 where Macbeth is praised as a hero"
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "issues": []
+  },
+  "stage": "publishing",
+  "progress": 97
+}
