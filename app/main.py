@@ -40,11 +40,7 @@ app.add_middleware(
 )
 
 _FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
-app.mount(
-    "/",
-    StaticFiles(directory=_FRONTEND_DIR, html=True),
-    name="frontend",
-)
+
 _JOB_OUTPUTS_DIR = Path(__file__).resolve().parent.parent / "job_outputs"
 _ARTIFACT_FILENAMES = {
     "json": "TeacherKnowledgePackage.json",
@@ -124,4 +120,9 @@ def download(job_id: str, artifact: str):
     path=file_path,
     filename=file_path.name,
     media_type=media_types.get(suffix, "application/octet-stream"),
+)
+app.mount(
+    "/",
+    StaticFiles(directory=_FRONTEND_DIR, html=True),
+    name="frontend",
 )
