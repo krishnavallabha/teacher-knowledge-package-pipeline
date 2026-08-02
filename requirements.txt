@@ -1,0 +1,24 @@
+fastapi==0.141.1
+uvicorn[standard]==0.52.0
+pydantic==2.13.4
+httpx==0.28.1
+python-dotenv==1.0.1
+pdfplumber==0.11.9
+pymupdf==1.28.0
+pytesseract==0.3.13
+Pillow==12.1.1
+python-docx==1.2.0
+python-pptx==1.0.2
+fpdf2==2.8.7
+python-multipart==0.0.32
+scikit-learn==1.8.0
+numpy==2.4.4
+rapidfuzz>=3.0.0
+# LLM provider SDKs -- all four are installed regardless of which one you
+# actually use, since app/llm_providers auto-detects from whichever API key
+# is set at runtime. This is what lets an evaluator with only an OpenAI or
+# Gemini key run the project with zero code changes.
+anthropic==0.120.2
+groq==1.6.0
+google-genai==2.16.0
+openai==2.52.0
