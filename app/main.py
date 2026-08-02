@@ -18,10 +18,10 @@ SSE rather than plain polling because Stage 10's spec explicitly asks for
 frontend" -- SSE is the simplest transport that satisfies that over plain
 HTTP without needing a websocket server.
 """
-
+print("========== APP STARTED ==========", flush=True)
 import json
 from pathlib import Path
-
+import traceback
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
@@ -89,7 +89,13 @@ async def generate(
                     payload["artifacts"] = JOB_ARTIFACTS.get(tkp.job_id, {})
                 yield f"data: {json.dumps(payload)}\n\n"
         except Exception as e:  # noqa: BLE001 -- surface any pipeline failure to the client
-            yield f"data: {json.dumps({'stage': 'failed', 'progress': 0, 'error': str(e)})}\n\n"
+            traceback.print_exc()
+            print("PIPELINE FAILED:", repr(e)
+            yield f"data: {json.dumps({
+        'stage': 'failed',
+        'progress': 0,
+        'error': str(e)
+    })}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
 
