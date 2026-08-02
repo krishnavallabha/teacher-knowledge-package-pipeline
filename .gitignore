@@ -1,0 +1,18 @@
+# Environment
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Generated pipeline output (job artifacts, not source)
+job_outputs/
+
+# OS/editor cruft
+.DS_Store
+.vscode/
+.idea/
