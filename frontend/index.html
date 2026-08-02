@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Generate a classroom-ready Teacher Knowledge Package from your document with live progress and downloadable artifacts." />
+  <title>Teacher Knowledge Package Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-decor" aria-hidden="true">
+    <div class="bg-orb bg-orb-a"></div>
+    <div class="bg-orb bg-orb-b"></div>
+    <div class="bg-grid"></div>
+  </div>
+
+  <div class="page-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span class="brand-name">TKP Studio</span>
+      </div>
+      <span class="topbar-chip">AI teaching pipeline</span>
+    </header>
+
+    <section class="hero">
+      <h1>Teacher Knowledge Package</h1>
+      <p class="hero-lead">
+        Upload a document. Get a classroom-ready teaching plan with lessons, activities, assessments, and live progress.
+      </p>
+    </section>
+
+    <div class="main-grid">
+      <section class="panel glass-panel">
+        <div class="panel-header">
+          <h2>Create a package</h2>
+          <p>Drop in a PDF, DOCX, PPTX, or TXT — optionally add planning hints to shape the output.</p>
+        </div>
+        <div class="panel-body">
+          <form id="generator-form" novalidate>
+            <div id="upload-zone" class="upload-zone" aria-label="File upload area">
+              <div class="upload-icon" aria-hidden="true">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 16V6" />
+                  <path d="M8.5 9.5 12 6l3.5 3.5" />
+                  <path d="M4 16.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1.5" />
+                </svg>
+              </div>
+              <div class="upload-copy">
+                <div>
+                  <strong>Drag &amp; drop your document</strong>
+                  <span>or browse to select a file. Supported: PDF, DOCX, PPTX, TXT, MD.</span>
+                </div>
+                <div class="file-chip" id="file-chip">No file selected</div>
+              </div>
+              <div class="upload-actions">
+                <label for="file-input" class="file-label">Browse files</label>
+                <input type="file" id="file-input" title="Upload a document file" accept=".pdf,.docx,.pptx,.ppt,.txt,.md" />
+                <button id="generate-btn" class="primary-btn" type="submit">Generate package</button>
+              </div>
+              <div class="helper-row">
+                <span class="helper-pill">PDF · DOCX · PPTX · TXT</span>
+                <span class="helper-pill">Optional hints</span>
+                <span class="helper-pill">Live SSE progress</span>
+              </div>
+            </div>
+
+            <details class="details-extra">
+              <summary>Optional planning hints</summary>
+              <div class="form-hints">
+                <label>Grade level
+                  <input type="text" id="grade-override" placeholder="e.g. 9" />
+                </label>
+                <label>Teaching objectives
+                  <input type="text" id="teaching-objectives" placeholder="e.g. focus on numerical problem solving" />
+                </label>
+                <label>Preferred teaching style
+                  <input type="text" id="teaching-style" placeholder="e.g. activity-based, discussion-heavy" />
+                </label>
+                <label>Total instructional time, in minutes
+                  <input type="number" id="time-constraint" placeholder="e.g. 200" min="1" />
+                </label>
+                <label>Curriculum board
+                  <input type="text" id="curriculum-board" placeholder="e.g. CBSE" />
+                </label>
+                <label class="hint-full">Document type hint
+                  <select id="document-type-hint">
+                    <option value="not_sure">Not sure — let the system decide</option>
+                    <option value="mostly_text">Mostly text</option>
+                    <option value="text_with_tables">Text with tables</option>
+                    <option value="text_with_diagrams">Text with diagrams/figures</option>
+                    <option value="text_with_equations">Text with equations</option>
+                    <option value="scanned_pdf">Scanned PDF</option>
+                  </select>
+                </label>
+              </div>
+            </details>
+          </form>
+        </div>
+      </section>
+
+      <aside class="support-card">
+        <div class="support-box glass-panel">
+          <h3>Tips for better results</h3>
+          <ul class="checklist">
+            <li>Use the document type hint if you know the PDF is scanned.</li>
+            <li>Add a grade or instructional goal to steer the lesson plan.</li>
+            <li>Keep the source file reasonably clean for best extraction quality.</li>
+          </ul>
+        </div>
+
+        <div class="progress-card glass-panel">
+          <div class="progress-top">
+            <span class="progress-title">Progress</span>
+            <span id="progress-value" class="progress-value">0%</span>
+          </div>
+          <div id="progress-wrap" class="progress-track hidden">
+            <div id="progress-bar" class="progress-fill"></div>
+          </div>
+          <div id="stage-label" class="stage-label">Waiting for a document…</div>
+          <div id="stage-badge" class="stage-badge">Idle</div>
+
+          <ol class="timeline" id="progress-timeline" aria-label="Pipeline stages">
+            <li class="timeline-step" data-stage="document-intelligence">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+              </span>
+              <span class="timeline-text">Parse document</span>
+            </li>
+            <li class="timeline-step" data-stage="educational-classification">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
+              </span>
+              <span class="timeline-text">Classify</span>
+            </li>
+            <li class="timeline-step" data-stage="knowledge-extraction">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18"/><path d="M5 10h14"/><path d="M5 14h14"/></svg>
+              </span>
+              <span class="timeline-text">Extract knowledge</span>
+            </li>
+            <li class="timeline-step" data-stage="teaching-planner">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+              </span>
+              <span class="timeline-text">Plan teaching</span>
+            </li>
+            <li class="timeline-step" data-stage="period-generation">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              </span>
+              <span class="timeline-text">Generate periods</span>
+            </li>
+            <li class="timeline-step" data-stage="gap-analysis">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
+              </span>
+              <span class="timeline-text">Gap analysis</span>
+            </li>
+            <li class="timeline-step" data-stage="validation">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+              </span>
+              <span class="timeline-text">Validate</span>
+            </li>
+            <li class="timeline-step" data-stage="grounding-validation">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </span>
+              <span class="timeline-text">Ground claims</span>
+            </li>
+            <li class="timeline-step" data-stage="publishing">
+              <span class="timeline-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+              </span>
+              <span class="timeline-text">Publish</span>
+            </li>
+          </ol>
+        </div>
+      </aside>
+    </div>
+
+    <div class="content-area">
+      <section id="result" class="section glass-panel result-panel">
+        <div class="placeholder">Your generated Teacher Knowledge Package will appear here after the pipeline finishes.</div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = window.BACKEND_URL || "http://localhost:8000";
+    const fileInput = document.getElementById("file-input");
+    const fileChip = document.getElementById("file-chip");
+    const uploadZone = document.getElementById("upload-zone");
+    const generateBtn = document.getElementById("generate-btn");
+    const progressWrap = document.getElementById("progress-wrap");
+    const progressBar = document.getElementById("progress-bar");
+    const progressValue = document.getElementById("progress-value");
+    const stageLabel = document.getElementById("stage-label");
+    const stageBadge = document.getElementById("stage-badge");
+    const result = document.getElementById("result");
+    const generatorForm = document.getElementById("generator-form");
+    const timelineSteps = Array.from(document.querySelectorAll(".timeline-step"));
+
+    const stageOrder = [
+      "document-intelligence",
+      "educational-classification",
+      "knowledge-extraction",
+      "teaching-planner",
+      "period-generation",
+      "gap-analysis",
+      "validation",
+      "grounding-validation",
+      "publishing",
+      "done",
+    ];
+
+    const stageNames = {
+      "document-intelligence": "Parsing document",
+      "educational-classification": "Classifying document",
+      "knowledge-extraction": "Extracting knowledge",
+      "teaching-planner": "Building teaching plan",
+      "period-generation": "Generating period package",
+      "gap-analysis": "Analyzing learning gaps",
+      "validation": "Running validation",
+      "grounding-validation": "Checking grounding",
+      "publishing": "Publishing artifacts",
+      done: "Finished",
+      failed: "Failed",
+    };
+
+    function formatFileSize(bytes) {
+      if (!bytes && bytes !== 0) return "";
+      const units = ["B", "KB", "MB", "GB"];
+      let value = bytes;
+      let unit = 0;
+      while (value >= 1024 && unit < units.length - 1) {
+        value /= 1024;
+        unit += 1;
+      }
+      return `${value.toFixed(value >= 10 || unit === 0 ? 0 : 1)} ${units[unit]}`;
+    }
+
+    function setSelectedFile(file) {
+      if (!file) {
+        fileChip.textContent = "No file selected";
+        fileChip.classList.remove("has-file");
+        return;
+      }
+      fileChip.textContent = `${file.name} · ${formatFileSize(file.size)}`;
+      fileChip.classList.add("has-file");
+    }
+
+    function resetTimeline() {
+      timelineSteps.forEach((step) => {
+        step.classList.remove("is-active", "is-done", "is-failed");
+      });
+    }
+
+    function updateTimeline(stage) {
+      if (stage === "failed") {
+        const active = timelineSteps.find((step) => step.classList.contains("is-active"));
+        if (active) {
+          active.classList.remove("is-active");
+          active.classList.add("is-failed");
+        }
+        return;
+      }
+
+      const currentIndex = stageOrder.indexOf(stage);
+      timelineSteps.forEach((step) => {
+        const stepIndex = stageOrder.indexOf(step.dataset.stage);
+        step.classList.remove("is-active", "is-done", "is-failed");
+        if (stage === "done" || (currentIndex > -1 && stepIndex < currentIndex)) {
+          step.classList.add("is-done");
+        } else if (stepIndex === currentIndex) {
+          step.classList.add("is-active");
+        }
+      });
+    }
+
+    fileInput.addEventListener("change", () => setSelectedFile(fileInput.files[0]));
+
+    uploadZone.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      uploadZone.classList.add("is-dragover");
+    });
+
+    uploadZone.addEventListener("dragleave", () => uploadZone.classList.remove("is-dragover"));
+
+    uploadZone.addEventListener("drop", (event) => {
+      event.preventDefault();
+      uploadZone.classList.remove("is-dragover");
+      const [file] = event.dataTransfer.files;
+      if (!file) return;
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+      fileInput.files = dataTransfer.files;
+      setSelectedFile(file);
+    });
+
+    generatorForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      if (!fileInput.files.length) {
+        alert("Choose a file first.");
+        return;
+      }
+
+      generateBtn.disabled = true;
+      generateBtn.textContent = "Generating…";
+      progressWrap.classList.remove("hidden");
+      progressBar.style.width = "0%";
+      progressValue.textContent = "0%";
+      stageLabel.textContent = "Starting pipeline…";
+      stageBadge.textContent = "Working";
+      stageBadge.className = "stage-badge is-live";
+      resetTimeline();
+      result.innerHTML = `<div class="placeholder">The pipeline is running. You’ll see live status here once it completes.</div>`;
+
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("grade_override", document.getElementById("grade-override").value);
+      formData.append("teaching_objectives", document.getElementById("teaching-objectives").value);
+      formData.append("teaching_style", document.getElementById("teaching-style").value);
+      const timeConstraint = document.getElementById("time-constraint").value;
+      if (timeConstraint) formData.append("time_constraint_minutes", timeConstraint);
+      formData.append("curriculum_board", document.getElementById("curriculum-board").value);
+      formData.append("document_type_hint", document.getElementById("document-type-hint").value);
+
+      try {
+        const response = await fetch(`${BACKEND_URL}/api/generate`, { method: "POST", body: formData });
+        if (!response.ok || !response.body) {
+          throw new Error(`Request failed with status ${response.status}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const events = buffer.split("\n\n");
+          buffer = events.pop();
+          for (const evt of events) {
+            if (!evt.startsWith("data: ")) continue;
+            const payload = JSON.parse(evt.slice(6));
+            updateProgress(payload);
+          }
+        }
+      } catch (error) {
+        updateProgress({ stage: "failed", progress: 0, error: error.message || String(error) });
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate package";
+        stageBadge.classList.remove("is-live");
+      }
+    });
+
+    function updateProgress(payload) {
+      progressBar.style.width = `${payload.progress}%`;
+      progressValue.textContent = `${payload.progress}%`;
+      const friendly = stageNames[payload.stage] || payload.stage;
+      stageLabel.textContent = `Stage: ${friendly}`;
+      stageBadge.textContent = friendly;
+      updateTimeline(payload.stage);
+
+      if (payload.stage === "document-intelligence" || payload.stage === "done") {
+        progressWrap.classList.remove("hidden");
+      }
+
+      if (payload.stage === "failed") {
+        stageBadge.classList.remove("is-live");
+        stageBadge.classList.add("is-failed");
+        stageBadge.textContent = "Failed";
+        result.innerHTML = `<div class="error-box"><strong>Pipeline failed:</strong> ${escapeHtml(payload.error || "Unknown error")}</div>`;
+      }
+      if (payload.stage === "done") {
+        stageBadge.classList.remove("is-live");
+        stageBadge.classList.add("is-done");
+        renderResult(payload.result, payload.artifacts);
+      }
+    }
+
+    function parseCitation(raw) {
+      const text = String(raw || "").trim();
+      const chunkMatch = text.match(/chunk\s*#?\s*(\d+)/i);
+      const pageMatch = text.match(/(?:page|p\.?)\s*(\d+)/i);
+      const simMatch = text.match(/(?:similarity|relevance|score)\s*[:=]?\s*(0?\.\d+|1(?:\.0+)?|\d+(?:\.\d+)?%?)/i);
+      const headingMatch = text.match(/\[([^\]]+)\]/) || text.match(/["“]([^"”]+)["”]/);
+
+      let label = text
+        .replace(/chunk\s*#?\s*\d+/gi, "")
+        .replace(/(?:page|p\.?)\s*\d+/gi, "")
+        .replace(/(?:similarity|relevance|score)\s*[:=]?\s*(0?\.\d+|1(?:\.0+)?|\d+(?:\.\d+)?%?)/gi, "")
+        .replace(/\[[^\]]*\]/g, "")
+        .replace(/^[\s,;:\-–—|/]+|[\s,;:\-–—|/]+$/g, "")
+        .trim();
+
+      if (!label && headingMatch) label = headingMatch[1].trim();
+
+      let similarity = null;
+      if (simMatch) {
+        const rawScore = simMatch[1];
+        similarity = rawScore.includes("%")
+          ? rawScore
+          : `Similarity ${Number(rawScore).toFixed(2)}`;
+      }
+
+      const page = pageMatch ? pageMatch[1] : null;
+      const chunk = chunkMatch ? chunkMatch[1] : null;
+      const title = page
+        ? `Page ${page}`
+        : chunk
+          ? `Chunk ${chunk}`
+          : "Source";
+
+      return {
+        title,
+        label: label || null,
+        similarity,
+        showFallback: !page && !chunk && !label,
+        fallback: text,
+      };
+    }
+
+    function renderCitations(citations) {
+      if (!citations?.length) return "";
+      const cards = citations.map((citation) => {
+        const parsed = parseCitation(citation);
+        const body = parsed.label
+          ? `<div class="citation-label">${escapeHtml(parsed.label)}</div>`
+          : parsed.showFallback
+            ? `<div class="citation-label">${escapeHtml(parsed.fallback)}</div>`
+            : "";
+        return `<div class="citation-card">
+          <div class="citation-title">
+            <span class="citation-icon" aria-hidden="true">📄</span>
+            <strong>${escapeHtml(parsed.title)}</strong>
+          </div>
+          ${body}
+          ${parsed.similarity ? `<div class="citation-meta">${escapeHtml(parsed.similarity)}</div>` : ""}
+        </div>`;
+      }).join("");
+      return `<div class="period-section">
+        <h5 class="period-section-title">Sources</h5>
+        <div class="citation-grid">${cards}</div>
+      </div>`;
+    }
+
+    function renderPeriodSection(title, bodyHtml, extraClass = "") {
+      if (!bodyHtml) return "";
+      return `<div class="period-section ${extraClass}">
+        <h5 class="period-section-title">${escapeHtml(title)}</h5>
+        <div class="period-section-body wrap-text">${bodyHtml}</div>
+      </div>`;
+    }
+
+    function renderTextBlock(value) {
+      const text = String(value || "").trim();
+      if (!text) return "";
+      return `<p class="wrap-text">${escapeHtml(text)}</p>`;
+    }
+
+    function renderListBlock(items) {
+      if (!items?.length) return "";
+      return `<ul class="period-list">${items.map((item) => `<li class="wrap-text">${escapeHtml(String(item))}</li>`).join("")}</ul>`;
+    }
+
+    function artifactMeta(name) {
+      const lower = name.toLowerCase();
+      if (lower.includes("pdf")) return { kind: "PDF document", icon: "pdf" };
+      if (lower.includes("json")) return { kind: "JSON data", icon: "json" };
+      if (lower.includes("md") || lower.includes("markdown")) return { kind: "Markdown file", icon: "md" };
+      if (lower.includes("docx") || lower.includes("doc")) return { kind: "Word document", icon: "doc" };
+      return { kind: "Downloadable file", icon: "file" };
+    }
+
+    function downloadIconSvg(kind) {
+      if (kind === "pdf") {
+        return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 15h6"/><path d="M9 11h6"/></svg>`;
+      }
+      return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>`;
+    }
+
+    function renderResult(tkp, artifacts) {
+      const metadata = tkp.metadata || {};
+      const validationPassed = tkp.validation?.passed;
+      const groundingPassed = tkp.grounding?.passed;
+
+      let html = `<div class="result-stack fade-in">
+        <section class="result-block">
+        <div class="section-header">
+          <div>
+            <h3>${escapeHtml(metadata.subject || "Generated result")}${metadata.topic ? ` — ${escapeHtml(metadata.topic)}` : ""}</h3>
+            <p class="section-note">A quick overview of the generated package and its downloadable outputs.</p>
+          </div>
+          <div class="status-badges">`;
+
+      html += `<span class="badge ${validationPassed === true ? "success" : validationPassed === false ? "danger" : ""}"><span class="badge-dot"></span>Structural validation: ${validationPassed === true ? "Passed" : validationPassed === false ? "Failed" : "Pending"}</span>`;
+      html += `<span class="badge ${groundingPassed === true ? "success" : groundingPassed === false ? "warning" : ""}"><span class="badge-dot"></span>Grounding: ${groundingPassed === true ? "Passed" : groundingPassed === false ? "Issues found" : "Pending"}</span>`;
+      html += `</div></div>`;
+
+      html += `<div class="result-summary">
+        <div class="result-metric"><span>Grade</span><strong>${escapeHtml(String(metadata.grade ?? "—"))}</strong></div>
+        <div class="result-metric"><span>Difficulty</span><strong>${escapeHtml(String(metadata.difficulty ?? "—"))}</strong></div>
+        <div class="result-metric"><span>Category</span><strong>${escapeHtml(String(metadata.category ?? "—"))}</strong></div>
+        <div class="result-metric"><span>Board</span><strong>${escapeHtml(String(metadata.curriculum_board ?? tkp.user_context?.curriculum_board ?? "—"))}</strong></div>
+        <div class="result-metric"><span>Job ID</span><strong>${escapeHtml(String(tkp.job_id || "—"))}</strong></div>
+      </div>`;
+
+      const artifactEntries = Object.entries(artifacts || {});
+      if (artifactEntries.length) {
+        html += `<div class="section-header artifact-header"><h3>Download artifacts</h3></div><div class="artifact-links">`;
+        for (const [name] of artifactEntries) {
+          const meta = artifactMeta(name);
+          html += `<button type="button" class="download-btn" data-artifact="${escapeHtml(name)}">
+            <span class="download-icon">${downloadIconSvg(meta.icon)}</span>
+            <span class="download-copy">
+              <span class="download-name">${escapeHtml(name.replace(/_/g, " "))}</span>
+              <span class="download-kind">${escapeHtml(meta.kind)}</span>
+            </span>
+            <span class="download-arrow" aria-hidden="true">↓</span>
+          </button>`;
+        }
+        html += `</div>`;
+      }
+
+      html += `</section>`;
+
+      html += `<section class="result-block"><div class="section-header"><div><h3>Period plan</h3><p class="section-note">The learning sequence broken into class periods.</p></div></div><div class="periods">`;
+      for (const pc of tkp.period_contents || []) {
+        html += `<article class="period">
+          <h4>Period ${pc.period_number}</h4>
+          ${renderPeriodSection("Entry Ticket", renderTextBlock(pc.entry_ticket))}
+          ${renderPeriodSection("Teacher Script", renderTextBlock(pc.teacher_script), "is-script")}
+          ${renderPeriodSection("Blackboard Notes", renderTextBlock(pc.blackboard_notes))}
+          ${renderPeriodSection("Classroom Activity", renderListBlock(pc.classroom_activities))}
+          ${renderPeriodSection("Checkpoint Questions", renderListBlock(pc.checkpoint_questions))}
+          ${renderPeriodSection("Exit Ticket", renderTextBlock(pc.exit_ticket))}
+          ${renderPeriodSection("Homework", renderTextBlock(pc.homework))}
+          ${renderPeriodSection("Mentor Moment", renderTextBlock(pc.mentor_moment))}
+          ${renderCitations(pc.source_citations)}
+        </article>`;
+      }
+      html += `</div></section>`;
+
+      if (tkp.activities?.length) {
+        html += `<section class="result-block"><div class="section-header"><div><h3>Activities</h3><p class="section-note">Per-period hands-on activities generated alongside the lesson material.</p></div></div><div class="periods">`;
+        for (const activity of tkp.activities) {
+          html += `<article class="period">
+            <h4>Period ${activity.period_number}: ${escapeHtml(String(activity.title || ""))}</h4>
+            ${renderPeriodSection("Type", renderTextBlock(activity.activity_type))}
+            ${renderPeriodSection("Duration", renderTextBlock(`${activity.duration_minutes ?? ""} minutes`))}
+            ${renderPeriodSection("Materials", renderListBlock(activity.materials_needed))}
+            ${renderPeriodSection("Instructions", renderTextBlock(activity.teacher_instructions))}
+            ${renderPeriodSection("Success criteria", renderTextBlock(activity.success_criteria))}
+            ${renderCitations(activity.source_citations)}
+          </article>`;
+        }
+        html += `</div></section>`;
+      }
+
+      if (tkp.assessments?.length) {
+        html += `<section class="result-block"><div class="section-header"><div><h3>Assessments</h3><p class="section-note">Per-period question sets with answer keys.</p></div></div><div class="periods">`;
+        for (const assessment of tkp.assessments) {
+          html += `<article class="period"><h4>Period ${assessment.period_number} assessment</h4>`;
+          for (const q of assessment.questions || []) {
+            html += `<div class="question-block">
+              ${renderPeriodSection("Question", renderTextBlock(q.question_text))}
+              ${renderPeriodSection("Type", renderTextBlock(q.question_type))}
+              ${q.options?.length ? renderPeriodSection("Options", renderListBlock(q.options)) : ""}
+              ${renderPeriodSection("Answer", renderTextBlock(q.correct_answer))}
+              ${q.rubric ? renderPeriodSection("Rubric", renderTextBlock(q.rubric)) : ""}
+              ${renderCitations(q.source_citations)}
+            </div>`;
+          }
+          html += `</article>`;
+        }
+        html += `</div></section>`;
+      }
+
+      if (tkp.validation) {
+        html += `<section class="result-block"><div class="section-header"><div><h3>Structural validation</h3><p class="section-note">Checks for package consistency and completeness.</p></div></div>`;
+        const issues = tkp.validation.issues || [];
+        html += issues.length
+          ? `<ul class="issues-list">${issues.map((i) => `<li class="wrap-text"><strong>[${escapeHtml(String(i.severity))}] ${escapeHtml(String(i.stage))}</strong> — ${escapeHtml(String(i.message))}</li>`).join("")}</ul>`
+          : `<div class="placeholder soft">No structural issues were reported.</div>`;
+        html += `</section>`;
+      }
+
+      if (tkp.grounding) {
+        html += `<section class="result-block"><div class="section-header"><div><h3>Grounding check</h3><p class="section-note">Claims compared against the uploaded source text.</p></div></div>`;
+        const claims = tkp.grounding.ungrounded_claims || [];
+        html += claims.length
+          ? `<ul class="issues-list">${claims.map((c) => `<li class="wrap-text"><strong>${escapeHtml(String(c.location))}:</strong> ${escapeHtml(String(c.claim))}</li>`).join("")}</ul>`
+          : `<div class="placeholder soft">No ungrounded claims were flagged.</div>`;
+        html += `</section>`;
+      }
+
+      html += `<section class="result-block"><div class="section-header"><div><h3>Raw JSON</h3><p class="section-note">Useful for debugging, exporting, or inspecting the full payload.</p></div></div><pre>${escapeHtml(JSON.stringify(tkp, null, 2).slice(0, 5000))}...</pre></section></div>`;
+
+      result.innerHTML = html;
+      result.querySelectorAll(".download-btn").forEach((button) => {
+        button.addEventListener("click", () => {
+          const artifact = button.getAttribute("data-artifact");
+          if (artifact) {
+            downloadArtifact(tkp.job_id, artifact);
+          }
+        });
+      });
+    }
+
+    async function downloadArtifact(jobId, artifact) {
+      const url = `${BACKEND_URL}/api/download/${jobId}/${artifact}`;
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Download failed with status ${response.status}`);
+        }
+
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = objectUrl;
+        const disposition = response.headers.get("Content-Disposition");
+
+        let filename = artifact;
+
+        if (disposition) {
+          const match = disposition.match(/filename="?([^"]+)"?/);
+          if (match) {
+            filename = match[1];
+          }
+        }
+
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(objectUrl);
+      } catch (error) {
+        result.innerHTML = `<div class="error-box"><strong>Download failed:</strong> ${escapeHtml(error.message || String(error))}</div>` + result.innerHTML;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+  </script>
+</body>
+</html>
