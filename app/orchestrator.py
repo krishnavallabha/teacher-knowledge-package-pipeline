@@ -22,7 +22,7 @@ tuples, which the FastAPI route below turns directly into an SSE stream --
 this is the same object driving both progress reporting and the final
 result, so there's no risk of the two drifting out of sync.
 """
-
+print(">>> Entered Gap Analysis", flush=True)
 import asyncio
 import os
 import uuid
