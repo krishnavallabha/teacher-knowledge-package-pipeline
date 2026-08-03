@@ -1,21 +1,42 @@
-name: Keep Teacher Knowledge Pipeline Awake
+name: Keep Teacher Knowledge Package Awake
 
 on:
   schedule:
     # Every 10 minutes
     - cron: "*/10 * * * *"
-
   workflow_dispatch:
 
 jobs:
-  keep-alive:
+  keepalive:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Ping Render Health Endpoint
-        run: |
-          curl -L -f https://teacher-knowledge-package-pipeline.onrender.com/api/health || true
+      - name: Show current time
+        run: date
 
-      - name: Ping Homepage
+      - name: Wake homepage
         run: |
-          curl -L -f https://teacher-knowledge-package-pipeline.onrender.com/ || true
+          curl -L --retry 5 --retry-delay 5 --max-time 60 \
+          -H "User-Agent: GitHub-Actions-KeepAlive" \
+          https://teacher-knowledge-package-pipeline.onrender.com/
+
+      - name: Wait 30 seconds
+        run: sleep 30
+
+      - name: Wake API
+        run: |
+          curl -L --retry 5 --retry-delay 5 --max-time 60 \
+          -H "User-Agent: GitHub-Actions-KeepAlive" \
+          https://teacher-knowledge-package-pipeline.onrender.com/api/health
+
+      - name: Wait 30 seconds
+        run: sleep 30
+
+      - name: Hit homepage again
+        run: |
+          curl -L --retry 5 --retry-delay 5 --max-time 60 \
+          -H "User-Agent: GitHub-Actions-KeepAlive" \
+          https://teacher-knowledge-package-pipeline.onrender.com/
+
+      - name: Print status
+        run: echo "Keep-alive completed."
