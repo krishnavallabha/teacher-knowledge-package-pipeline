@@ -1,0 +1,21 @@
+name: Keep Teacher Knowledge Pipeline Awake
+
+on:
+  schedule:
+    # Every 10 minutes
+    - cron: "*/10 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Render Health Endpoint
+        run: |
+          curl -L -f https://teacher-knowledge-package-pipeline.onrender.com/api/health || true
+
+      - name: Ping Homepage
+        run: |
+          curl -L -f https://teacher-knowledge-package-pipeline.onrender.com/ || true
