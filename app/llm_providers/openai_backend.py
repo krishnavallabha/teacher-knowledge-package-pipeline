@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import os
 
-from app.llm_providers.base import LLMBackend, ProviderRateLimitError, ProviderTransientError
+from app.llm_providers.base import (
+    LLMBackend,
+    ProviderRateLimitError,
+    ProviderTransientError,
+    ProviderTruncationError,
+)
 
 MODEL = os.environ.get("OPENAI_MODEL", "gpt-5.1")
 
@@ -27,7 +32,12 @@ class OpenAIBackend(LLMBackend):
                 response_format={"type": "json_object"},
                 messages=messages,
             )
-            return response.choices[0].message.content.strip()
+            choice = response.choices[0]
+            if choice.finish_reason == "length":
+                raise ProviderTruncationError(
+                    f"OpenAI output was truncated before JSON completed (max_tokens={max_tokens})"
+                )
+            return choice.message.content.strip()
         except self._openai.RateLimitError as exc:
             raise ProviderRateLimitError(str(exc), retry_after=_retry_after(exc)) from exc
         except (self._openai.APIConnectionError, self._openai.APITimeoutError, self._openai.InternalServerError) as exc:

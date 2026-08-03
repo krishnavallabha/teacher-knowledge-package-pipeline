@@ -34,5 +34,5 @@ def analyze_gaps(knowledge: KnowledgeGraph, metadata: EducationalMetadata) -> li
         f"Subject: {metadata.subject}, Grade: {metadata.grade}\n"
         f"Misconceptions to analyze: {knowledge.common_misconceptions}\n"
     )
-    result = generate_structured(SYSTEM_PROMPT, user_prompt, _GapList, max_tokens=3024)
+    result = generate_structured(SYSTEM_PROMPT, user_prompt, _GapList, max_tokens=6000)
     return result.gaps

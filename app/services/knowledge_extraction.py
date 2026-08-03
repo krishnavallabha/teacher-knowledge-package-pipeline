@@ -52,7 +52,7 @@ def _extract_single(text_chunk: str, metadata: EducationalMetadata) -> Knowledge
     SYSTEM_PROMPT,
     user_prompt,
     KnowledgeGraph,
-    max_tokens=30072,   
+    max_tokens=6000,
 )
     print(">>> Knowledge Extraction Complete")
     return result
@@ -97,6 +97,14 @@ def _merge_knowledge_graphs(partials: list[KnowledgeGraph]) -> KnowledgeGraph:
     merged.prerequisites = _dedupe(merged.prerequisites)
     merged.keywords = _dedupe(merged.keywords)
     merged.common_misconceptions = _dedupe(merged.common_misconceptions)
+
+    # Cap total merged concepts. A long OCR'd chapter chunked across many
+    # pieces can merge into 30+ concepts with no ceiling, which is what
+    # overloads the planner and, downstream, individual periods -- capping
+    # here bounds the problem at its source instead of only downstream.
+    if len(merged.concepts) > 20:
+        merged.concepts = merged.concepts[:20]
+
     return merged
 
 

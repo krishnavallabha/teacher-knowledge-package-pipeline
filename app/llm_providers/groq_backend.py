@@ -5,7 +5,12 @@ from __future__ import annotations
 import os
 import re
 
-from app.llm_providers.base import LLMBackend, ProviderRateLimitError, ProviderTransientError
+from app.llm_providers.base import (
+    LLMBackend,
+    ProviderRateLimitError,
+    ProviderTransientError,
+    ProviderTruncationError,
+)
 
 MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 
@@ -31,7 +36,12 @@ class GroqBackend(LLMBackend):
                 response_format={"type": "json_object"},
                 messages=messages,
             )
-            return response.choices[0].message.content.strip()
+            choice = response.choices[0]
+            if choice.finish_reason == "length":
+                raise ProviderTruncationError(
+                    f"Groq output was truncated before JSON completed (max_tokens={max_tokens})"
+                )
+            return choice.message.content.strip()
         except self._groq.RateLimitError as exc:
             raise ProviderRateLimitError(str(exc), retry_after=_seconds_until_retry(exc)) from exc
         except self._groq.BadRequestError as exc:

@@ -93,6 +93,13 @@ def generate_period_bundle(
     retrieved = index.retrieve(retrieval_query, top_k=3, min_score=0.05)
     source_passages = format_chunks_for_prompt(retrieved)
     relevant_concepts = _relevant_concepts(period, knowledge)
+    # Cap what a single period is asked to cover. On a content-dense
+    # chapter, the planner can still assign more concepts to one period
+    # than a single content+activity+assessment call can write well within
+    # any fixed token budget -- capping here bounds the request itself
+    # rather than just hoping a bigger max_tokens absorbs an unbounded one.
+    if len(relevant_concepts) > 6:
+        relevant_concepts = relevant_concepts[:6]
 
     user_prompt = (
         f"Subject: {metadata.subject}\n"
@@ -112,7 +119,7 @@ def generate_period_bundle(
         "retrieved passages above."
     )
 
-    bundle = generate_structured(SYSTEM_PROMPT, user_prompt, PeriodGenerationBundle, max_tokens=4608)
+    bundle = generate_structured(SYSTEM_PROMPT, user_prompt, PeriodGenerationBundle, max_tokens=8192)
 
     bundle.content.period_number = period.period_number
     bundle.activity.period_number = period.period_number

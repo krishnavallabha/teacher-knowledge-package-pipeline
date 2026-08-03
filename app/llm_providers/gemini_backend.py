@@ -11,7 +11,12 @@ from __future__ import annotations
 
 import os
 
-from app.llm_providers.base import LLMBackend, ProviderRateLimitError, ProviderTransientError
+from app.llm_providers.base import (
+    LLMBackend,
+    ProviderRateLimitError,
+    ProviderTransientError,
+    ProviderTruncationError,
+)
 
 MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.5-flash")
 
@@ -54,6 +59,10 @@ class GeminiBackend(LLMBackend):
                     "response_mime_type": "application/json",
                 },
             )
+            if response.candidates and response.candidates[0].finish_reason == "MAX_TOKENS":
+                raise ProviderTruncationError(
+                    f"Gemini output was truncated before JSON completed (max_tokens={max_tokens})"
+                )
             return (response.text or "").strip()
         except self._errors.ClientError as exc:
             if getattr(exc, "code", None) == 429:

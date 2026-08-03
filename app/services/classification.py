@@ -56,7 +56,7 @@ def classify_document(
         f"Document text (excerpt):\n{sample_text}"
     )
 
-    metadata = generate_structured(SYSTEM_PROMPT, user_prompt, EducationalMetadata)
+    metadata = generate_structured(SYSTEM_PROMPT, user_prompt, EducationalMetadata, max_tokens=6000)
     if user_context and user_context.grade_override:
         metadata.grade = user_context.grade_override
     if user_context and user_context.curriculum_board:

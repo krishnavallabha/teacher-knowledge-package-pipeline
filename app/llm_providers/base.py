@@ -30,6 +30,17 @@ class ProviderTransientError(Exception):
     """Normalized connection/timeout/5xx signal -- worth a retry, not a hard failure."""
 
 
+class ProviderTruncationError(Exception):
+    """
+    Normalized signal that the model hit its output token ceiling mid-generation
+    (Claude's stop_reason == "max_tokens", OpenAI/Groq's finish_reason == "length",
+    Gemini's finish_reason == "MAX_TOKENS"). This is a DIFFERENT failure mode from
+    malformed JSON: the model didn't make a mistake, it ran out of room. Retrying
+    with "fix your JSON" at the same max_tokens guarantees the same truncation in
+    the same place -- the caller needs to either raise the budget or ask for less.
+    """
+
+
 class LLMBackend(ABC):
     @abstractmethod
     def complete(self, messages: list[dict[str, str]], max_tokens: int) -> str:

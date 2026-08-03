@@ -4,7 +4,12 @@ from __future__ import annotations
 
 import os
 
-from app.llm_providers.base import LLMBackend, ProviderRateLimitError, ProviderTransientError
+from app.llm_providers.base import (
+    LLMBackend,
+    ProviderRateLimitError,
+    ProviderTransientError,
+    ProviderTruncationError,
+)
 
 MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-sonnet-5")
 
@@ -41,17 +46,20 @@ class AnthropicBackend(LLMBackend):
             print("STOP REASON:", response.stop_reason)
             print("USAGE:", response.usage)
             print("Claude returned successfully.")
+            if response.stop_reason == "max_tokens":
+                raise ProviderTruncationError(
+                    f"Claude output was truncated before JSON completed (max_tokens={max_tokens})"
+                )
             text = "".join(
-    block.text
-    for block in response.content
-    if block.type == "text"
-).strip()
+                block.text
+                for block in response.content
+                if block.type == "text"
+            ).strip()
 
             print("=" * 80)
             print("LAST 500 CHARACTERS")
             print(text[-500:])
             return text
-            return "".join(block.text for block in response.content if block.type == "text").strip()
         except self._anthropic.RateLimitError as exc:
             raise ProviderRateLimitError(str(exc), retry_after=_retry_after(exc)) from exc
         except (self._anthropic.APIConnectionError, self._anthropic.APITimeoutError, self._anthropic.InternalServerError) as exc:

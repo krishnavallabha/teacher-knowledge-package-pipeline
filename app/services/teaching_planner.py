@@ -29,6 +29,12 @@ ordering: a concept must not appear in an earlier period than the concepts \
 it depends on. Each period should have a coherent, teachable scope -- do \
 not just evenly split the concept list without regard to how they relate.
 
+Do not assign more than 5-6 concepts to a single period, even for a dense \
+chapter -- split into more periods instead of overloading one. A period \
+whose content, activity, and assessment all have to cover too many concepts \
+at once produces worse material and is more likely to hit generation limits \
+than the same content spread across an extra period.
+
 Decide BOTH the number of periods AND the duration of each period yourself, \
 based on content volume, conceptual density, and grade level -- do not \
 default to a fixed period count or a fixed duration like 40 minutes unless \
@@ -75,4 +81,4 @@ def build_teaching_plan(
         f"Prerequisites: {knowledge.prerequisites}\n"
         f"Concepts (in no particular order): {concept_names}\n"
     )
-    return generate_structured(SYSTEM_PROMPT, user_prompt, TeachingPlan, max_tokens=3072)
+    return generate_structured(SYSTEM_PROMPT, user_prompt, TeachingPlan, max_tokens=6000)

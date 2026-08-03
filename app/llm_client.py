@@ -39,7 +39,7 @@ from dotenv import find_dotenv, load_dotenv
 from pydantic import BaseModel, ValidationError
 
 from app.llm_providers import get_provider
-from app.llm_providers.base import ProviderRateLimitError, ProviderTransientError
+from app.llm_providers.base import ProviderRateLimitError, ProviderTransientError, ProviderTruncationError
 
 load_dotenv(find_dotenv())
 
@@ -56,7 +56,7 @@ def generate_structured(
     response_model: type[T],
     max_retries: int = 2,
     max_rate_limit_retries: int = 5,
-    max_tokens: int = 512,
+    max_tokens: int = 6000,
 ) -> T:
     """
     Call the configured LLM provider, force JSON-only output, and validate
@@ -83,6 +83,13 @@ def generate_structured(
 
     backend = get_provider()
     rate_limit_attempts = 0
+    truncation_attempts = 0
+    current_max_tokens = max_tokens
+    # Ceiling on how far we'll escalate the token budget for one call.
+    # Raised well past any single stage's normal need -- this is a safety
+    # valve for unusually content-dense input (e.g. a long OCR'd chapter
+    # assigning many concepts to one period), not a new default.
+    max_token_ceiling = max(max_tokens * 3, 8192)
 
     for attempt in range(max_retries + 1):
         while True:
@@ -90,9 +97,9 @@ def generate_structured(
                 
                 print("=" * 80)
                 print(f"Backend: {type(backend).__name__}")
-                print(f"Max tokens: {max_tokens}")
+                print(f"Max tokens: {current_max_tokens}")
                 print("Sending request to provider...")
-                raw_text = backend.complete(messages, max_tokens)
+                raw_text = backend.complete(messages, current_max_tokens)
                 print("Received response from provider.")
                 print(f"Response length: {len(raw_text)}")
                 print("=" * 80)
@@ -121,6 +128,23 @@ def generate_structured(
                         f"Exhausted {max_rate_limit_retries} transient-error retries: {exc}"
                     ) from exc
                 time.sleep(_backoff_seconds(None))
+                continue
+            except ProviderTruncationError as exc:
+                # A truncated response is NOT a model mistake to correct --
+                # it's a token budget that was too small for what this
+                # specific request needed. Re-sending the same messages with
+                # "fix your JSON" would just truncate again in the same
+                # place, since the model still has the same amount of
+                # content to say and the same ceiling to say it in. The
+                # correct response is to raise the ceiling and retry the
+                # SAME request, not to touch the conversation at all.
+                last_error = exc
+                truncation_attempts += 1
+                if truncation_attempts > max_rate_limit_retries or current_max_tokens >= max_token_ceiling:
+                    raise LLMGenerationError(
+                        f"Output truncated even after raising max_tokens to {current_max_tokens}: {exc}"
+                    ) from exc
+                current_max_tokens = min(int(current_max_tokens * 1.5), max_token_ceiling)
                 continue
 
         if raw_text.startswith("```"):
